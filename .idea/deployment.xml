@@ -2,10 +2,17 @@
 <project version="4">
   <component name="PublishConfigData" autoUpload="Always" serverName="ssh://jason@10.0.0.5:22/home/jason/anaconda3/envs/tensorflow/bin/python" autoUploadExternalChanges="true">
     <serverData>
+      <paths name="Copy of project-level server 'jason'">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="ssh://jason@10.0.0.5:22/home/jason/anaconda3/envs/tensorflow/bin/python">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/jason/Pycharms/bac_3000" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/jason/Pycharms/bac_3000" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
