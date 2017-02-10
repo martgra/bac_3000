@@ -13,6 +13,6 @@ Usage
 ===========
 Challenge
 ===========
-###Due date: December 8th
-Credits
+###Innlevering: 16. mai 2017
+References
 ===========
