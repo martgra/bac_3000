@@ -10,16 +10,18 @@ from scipy import ndimage
 import numpy as np
 import pickle
 
-url = 'http://commondatastorage.googleapis.com/books1000/'
-last_percent_reported = None
-data_root = './notMNIST'
-num_classes = 10
-image_size = 28
-pixel_depth = 255.0
-np.random.seed(133)
-num_labels = 10
+#url = 'http://commondatastorage.googleapis.com/books1000/'
+
+#data_root = './notMNIST'
+#num_classes = 10
+#image_size = 28
+#pixel_depth = 255.0
+
+#num_labels = 10
 num_channels = 1
 
+last_percent_reported = None
+np.random.seed(133)
 
 def download_hook(count, blockSize, totalSize):
     """A hook to report the progress of a download. This is mostly intended for users with
@@ -36,10 +38,10 @@ def download_hook(count, blockSize, totalSize):
             sys.stdout.write(".")
             sys.stdout.flush()
 
-    last_percent_reported = percent
+        last_percent_reported = percent
 
 
-def download_notmnist(filename, expected_bytes, force=False):
+def download_notmnist(filename, url, data_root, expected_bytes, force=False):
     dest_filename = os.path.join(data_root, filename)
     if force or not os.path.exists(dest_filename):
         print('Attempting to download:', filename)
@@ -53,7 +55,7 @@ def download_notmnist(filename, expected_bytes, force=False):
     return dest_filename
 
 
-def extract_notmnist(filename, force=False):
+def extract_notmnist(data_root, filename, num_classes, force=False):
     root = os.path.splitext(os.path.splitext(filename)[0])[0]  # remove .tar.gz
     if os.path.isdir(root) and not force:
         # You may override by setting force=True.
@@ -75,7 +77,7 @@ def extract_notmnist(filename, force=False):
     return data_folders
 
 
-def load_letter(folder, min_num_images):
+def load_letter(folder, min_num_images, image_size, pixel_depth):
     """Load the data for a single letter label."""
     image_files = os.listdir(folder)
     dataset = np.ndarray(shape=(len(image_files), image_size, image_size),
@@ -105,7 +107,7 @@ def load_letter(folder, min_num_images):
     return dataset
 
 
-def maybe_pickle(data_folders, min_num_images_per_class, force=False):
+def maybe_pickle(data_folders, min_num_images_per_class, image_size, pixel_depth, force=False):
     dataset_names = []
     for folder in data_folders:
         set_filename = folder + '.pickle'
@@ -115,7 +117,7 @@ def maybe_pickle(data_folders, min_num_images_per_class, force=False):
             print('%s already present - Skipping pickling.' % set_filename)
         else:
             print('Pickling %s.' % set_filename)
-            dataset = load_letter(folder, min_num_images_per_class)
+            dataset = load_letter(folder, min_num_images_per_class, image_size, pixel_depth)
             try:
                 with open(set_filename, 'wb') as f:
                     pickle.dump(dataset, f, pickle.HIGHEST_PROTOCOL)
@@ -125,14 +127,14 @@ def maybe_pickle(data_folders, min_num_images_per_class, force=False):
     return dataset_names
 
 
-def reformat(dataset, labels):
+def reformat(dataset, labels, image_size, num_labels):
     dataset = dataset.reshape((-1, image_size * image_size)).astype(np.float32)
     # Map 0 to [1.0, 0.0, 0.0 ...], 1 to [0.0, 1.0, 0.0 ...]
     labels = (np.arange(num_labels) == labels[:,None]).astype(np.float32)
     return dataset, labels
 
 
-def reformat2(dataset, labels):
+def reformat2(dataset, labels, image_size, num_labels, num_channels):
     dataset = dataset.reshape((-1, image_size, image_size, num_channels)).astype(np.float32)
     labels = (np.arange(num_labels) == labels[:, None]).astype(np.float32)
     return dataset, labels
@@ -147,7 +149,7 @@ def make_arrays(nb_rows, img_size):
     return dataset, labels
 
 
-def merge_datasets(pickle_files, train_size, valid_size=0):
+def merge_datasets(pickle_files, train_size, image_size, valid_size=0):
     num_classes = len(pickle_files)
     valid_dataset, valid_labels = make_arrays(valid_size, image_size)
     train_dataset, train_labels = make_arrays(train_size, image_size)
@@ -187,5 +189,3 @@ def randomize(dataset, labels):
     shuffled_dataset = dataset[permutation, :, :]
     shuffled_labels = labels[permutation]
     return shuffled_dataset, shuffled_labels
-
-
