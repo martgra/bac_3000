@@ -10,18 +10,18 @@ from keras import callbacks
 
 K.set_image_dim_ordering('tf')
 #martins variabler
-train_dir = '/home/jason/train/train'
-val_dir = '/home/jason/train/validate'
+train_dir = '/home/jason/train_3/train'
+val_dir = '/home/jason/train_3/validate'
 img_size = 299
 gen_batch = 64
 classes = 9
-weights_path = '/home/jason/train/train_weights'
+weights_path = '/home/jason/train_3'
 epoker = 50
 sdg = SGD(lr=0.0001, momentum=0.9)
 adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=0.1, decay=0.5)
 samples = 20
-log = '/home/jason/train'
-save_path = '/home/jason/train'
+log = '/home/jason/train_3'
+save_path = '/home/jason/train_3/save'
 tensorboard = callbacks.TensorBoard(log_dir=log, histogram_freq=1, write_graph=False)
 drop = 0.5
 
