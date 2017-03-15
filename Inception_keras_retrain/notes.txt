@@ -1,0 +1,9 @@
+Agaricus_bisporus
+Amanita_virosa
+Cantharellus_cibarius
+Craterellus_cornucopioides
+Suillus_variegatus
+Amanita_muscaria
+Boletus_edulis
+Cortinarius_rubellus
+Lactarius_deterrimus
