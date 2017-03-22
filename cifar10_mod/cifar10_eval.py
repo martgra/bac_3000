@@ -108,7 +108,7 @@ def evaluate():
   with tf.Graph().as_default() as g:
     # Get images and labels for CIFAR-10.
     eval_data = EVAL_DATA == 'test'
-    images, labels = cifar10.inputs(eval_data=eval_data)
+    images, labels = cifar10.inputs()
 
     # Build a Graph that computes the logits predictions from the
     # inference model.
@@ -136,10 +136,6 @@ def evaluate():
 
 
 def main(argv=None):  # pylint: disable=unused-argument
-  cifar10.maybe_download_and_extract()
-  if tf.gfile.Exists(EVAL_DIR):
-    tf.gfile.DeleteRecursively(EVAL_DIR)
-  tf.gfile.MakeDirs(EVAL_DIR)
   evaluate()
 
 

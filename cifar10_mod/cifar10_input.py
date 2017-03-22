@@ -33,7 +33,6 @@ from random import shuffle
 #NUM_CLASSES = hyper_parameters.NUM_CLASSES
 #NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = hyper_parameters.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
 #NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = hyper_parameters.NUM_EXAMPLES_PER_EPOCH_FOR_EVAL
-#TFRECORDS_DIR = hyper_parameters.TFRECORDS_DIR
 #IMAGE_RAW_SIZE = hyper_parameters.IMAGE_RAW_SIZE
 #IMAGE_DEPTH = hyper_parameters.IMAGE_DEPTH
 
@@ -61,16 +60,14 @@ def read_cifar10(filename_queue):
         pass
 
     result = CIFAR10Record()
-
-    result.height = IMAGE_RAW_SIZE
-    result.width = IMAGE_RAW_SIZE
-    result.depth = IMAGE_RAW_SIZE
-
     image, label, height, width, result.key = read_and_decode(filename_queue)
 
     image_shape = tf.stack([height, width, 3])
     image = tf.reshape(image, image_shape)
     result.label = tf.cast(label, tf.int32)
+    result.height = tf.cast(height, tf.int32)
+    result.width = tf.cast(width, tf.int32)
+    result.depth = 3
 
     result.uint8image = image
     return result
@@ -150,17 +147,9 @@ def distorted_inputs(data_dir, batch_size):
     return _generate_image_and_label_batch(float_image, read_input.label, min_queue_examples, batch_size, shuffle=True)
 
 
-def inputs(eval_data, batch_size):
-    """Construct input for CIFAR evaluation using the Reader ops.
-    Args:
-      eval_data: bool, indicating if one should use the train or eval data set.
-      data_dir: Path to the CIFAR-10 data directory.
-      batch_size: Number of images per batch.
-    Returns:
-      images: Images. 4D tensor of [batch_size, IMAGE_SIZE, IMAGE_SIZE, 3] size.
-      labels: Labels. 1D tensor of [batch_size] size.
-    """
-    filenames = filename_queue_generator(eval_data)
+def inputs(eval_dir, batch_size):
+
+    filenames = filename_queue_generator(eval_dir)
 
     # Create a queue that produces the filenames to read.
     filename_queue = tf.train.string_input_producer(filenames)
@@ -181,11 +170,10 @@ def inputs(eval_data, batch_size):
 
     # Set the shapes of tensors.
     float_image.set_shape([height, width, 3])
-    read_input.label.set_shape([1])
 
     # Ensure that the random shuffling has good mixing properties.
     min_fraction_of_examples_in_queue = 0.4
-    min_queue_examples = int(num_examples_per_epoch * min_fraction_of_examples_in_queue)
+    min_queue_examples = int(NUM_EXAMPLES_PER_EPOCH_FOR_EVAL * min_fraction_of_examples_in_queue)
 
     # Generate a batch of images and labels by building up a queue of examples.
     return _generate_image_and_label_batch(float_image, read_input.label, min_queue_examples, batch_size, shuffle=False)

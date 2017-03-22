@@ -50,10 +50,12 @@ def train():
         global_step = tf.contrib.framework.get_or_create_global_step()
 
         # Get images and labels for CIFAR-10.
-        images, labels = cifar10.distorted_inputs()
+        with tf.device('/cpu:0'):
+            images, labels = cifar10.distorted_inputs()
 
         # Build a Graph that computes the logits predictions from the
         # inference model.
+
         logits = cifar10.inference(images)
 
         # Calculate loss.
@@ -83,8 +85,10 @@ def train():
                     sec_per_batch = float(duration)
 
                     format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
-                                  'sec/batch)')
+                                  'sec/batch)\n')
                     print(format_str % (datetime.now(), self._step, loss_value, examples_per_sec, sec_per_batch))
+                    with open('/home/jason/tf_train/train_output/test.txt', 'a+') as f:
+                        f.write(format_str % (datetime.now(), self._step, loss_value, examples_per_sec, sec_per_batch))
 
         with tf.train.MonitoredTrainingSession(checkpoint_dir=TRAIN_DIR,
                 hooks=[tf.train.StopAtStepHook(last_step=MAX_STEPS), tf.train.NanTensorHook(loss), _LoggerHook()],
@@ -101,4 +105,5 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
+    hyperwriter()
     tf.app.run()
