@@ -18,7 +18,3 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import cifar10
-import cifar10_input
-import cifar10_train
-import hyper_parameters

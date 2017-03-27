@@ -21,18 +21,20 @@ from __future__ import print_function
 
 import os
 
-from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
+from six.moves import xrange  # pylint: disable=redefined-builtin
+
+import cifar10_train
 
 # Process images of this size. Note that this differs from the original CIFAR
 # image size of 32 x 32. If one alters this number, then the entire model
 # architecture will change and any model would need to be retrained.
-IMAGE_SIZE = 24
+IMAGE_SIZE = cifar10_train.IMAGE_SIZE
 
 # Global constants describing the CIFAR-10 data set.
-NUM_CLASSES = 10
-NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
-NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
+NUM_CLASSES = cifar10_train.NUM_CLASSES
+NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = cifar10_train.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
+NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = cifar10_train.NUM_EXAMPLES_PER_EPOCH_FOR_EVAL
 
 
 def read_cifar10(filename_queue):

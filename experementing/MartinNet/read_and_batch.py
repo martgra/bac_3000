@@ -4,7 +4,7 @@ import skimage.io as io
 IMAGE_HEIGHT = 299
 IMAGE_WIDTH = 299
 
-tfrecords_filename ='/home/jason/test/segmentation.tfrecords'
+tfrecords_filename ='/home/jason/tf_train/tf_records'
 filename_queue = tf.train.string_input_producer(
     [tfrecords_filename], num_epochs=1)
 
@@ -36,12 +36,33 @@ def read_and_decode(filename_queue):
                                             target_height=IMAGE_HEIGHT,
                                             target_width=IMAGE_WIDTH)
     images, labels = tf.train.shuffle_batch([resized_image, label],
-                                            batch_size=32,
-                                            capacity=30,
+                                            batch_size=10,
+                                            capacity=20,
                                             num_threads=2,
-                                            min_after_dequeue=10)
+                                            min_after_dequeue=2)
 
     return images, labels
 
-x, y = read_and_decode(filename_queue)
-print(x,y)
+'''
+queue = tf.train.string_input_producer([tfrecords_filename], num_epochs=10)
+image, label = read_and_decode(queue)
+
+
+
+init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+
+with tf.Session() as sess:
+    sess.run(init_op)
+
+    coord = tf.train.Coordinator()
+    threads = tf.train.start_queue_runners(coord=coord)
+
+    # Let's read off 3 batches just for example
+    for i in range(3):
+        img, anno = sess.run([image, label])
+        print(img[0, :, :, :].shape)
+        print('current batch')
+
+    coord.request_stop()
+    coord.join(threads)
+'''

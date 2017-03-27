@@ -2,13 +2,17 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/notMNIST" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/experementing/notMNIST" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/flex_model" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/TF_poets" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/MartinNet" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/cifar10" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Inception_keras_retrain" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/experementing/MartinNet" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/experementing/cifar10" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models/Inception_keras_retrain" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MartinNet2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models/cifar10_mod" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models/cifar10_original_structure" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models/cifar10_VGG15_implementation" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Remote Python 3.5.2 (ssh://jason@10.0.0.5:22/home/jason/anaconda3/envs/tensorflow3/bin/python3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

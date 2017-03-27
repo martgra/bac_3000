@@ -31,12 +31,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from datetime import datetime
 import time
+from datetime import datetime
 
 import tensorflow as tf
 
-import cifar10
+from experementing import cifar10
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -104,10 +104,10 @@ def train():
 
 
 def main(argv=None):  # pylint: disable=unused-argument
-  cifar10.maybe_download_and_extract()
-  if tf.gfile.Exists(FLAGS.train_dir):
-    tf.gfile.DeleteRecursively(FLAGS.train_dir)
-  tf.gfile.MakeDirs(FLAGS.train_dir)
+  #cifar10.maybe_download_and_extract()
+ # if tf.gfile.Exists(FLAGS.train_dir):
+  #  tf.gfile.DeleteRecursively(FLAGS.train_dir)
+ # tf.gfile.MakeDirs(FLAGS.train_dir)
   train()
 
 

@@ -30,15 +30,16 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from datetime import datetime
 import math
 import time
+from datetime import datetime
 
 import numpy as np
 import tensorflow as tf
 
 import cifar10
 from hyper_parameters import *
+
 
 #EVAL_DIR = hyper_parameters.EVAL_DIR
 #EVAL_DATA = hyper_parameters.EVAL_DATA

@@ -30,11 +30,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
 import re
+
 import tensorflow as tf
+
 import cifar10_input
 from hyper_parameters import *
+
 
 #BATCH_SIZE = hyper_parameters.BATCH_SIZE
 #DATA_DIR = hyper_parameters.DATA_DIR
