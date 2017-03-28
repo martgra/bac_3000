@@ -88,7 +88,7 @@ def train():
                     format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
                                   'sec/batch)\n')
                     print(format_str % (datetime.now(), self._step, loss_value, examples_per_sec, sec_per_batch))
-                    with open('/home/jason/tf_train/train_output/test.txt', 'a+') as f:
+                    with open('/home/jason/tf_train/train_output/train_log.txt', 'a+') as f:
                         f.write(format_str % (datetime.now(), self._step, loss_value, examples_per_sec, sec_per_batch))
 
         with tf.train.MonitoredTrainingSession(checkpoint_dir=TRAIN_DIR,
@@ -106,5 +106,5 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-    hyperwriter()
+    TRAIN_MODE = True
     tf.app.run()

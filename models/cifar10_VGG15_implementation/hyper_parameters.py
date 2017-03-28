@@ -16,8 +16,8 @@ RUN_ONCE = False
 
 # CIFAR10_INPUT
 NUM_CLASSES = 10
-NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
-NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 400
+NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 18000
+NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 1600
 IMAGE_RAW_SIZE = 2999
 IMAGE_DEPTH = 3
 # IMAGE_SIZE, found under CIFAR10.py
@@ -28,7 +28,7 @@ DATA_DIR = '/home/jason/tf_train/tfrecords/tfrecords_64/train'
 USE_FP16 = False
 TRAIN_MODE = True
 
-IMAGE_SIZE = 60
+IMAGE_SIZE = 32
  #NUM_CLASSES, found under CIFAR10_INPUT.py
 # NUM_EPOCHS_PER_DECAY, found under CIFAR10_INPUT.py
 # NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN, found under CIFAR10_INPUT.py
@@ -37,7 +37,7 @@ IMAGE_SIZE = 60
 MOVING_AVERAGE_DECAY = 0.9999  # The decay to use for the moving average.
 NUM_EPOCHS_PER_DECAY = 25.0  # Epochs after which learning rate decays.
 LEARNING_RATE_DECAY_FACTOR = 0.1  # Learning rate decay factor.
-INITIAL_LEARNING_RATE = 0.1  # Initial learning rate.
+INITIAL_LEARNING_RATE = 0.01  # Initial learning rate.
 TOWER_NAME = 'tower'
 
 
@@ -67,7 +67,7 @@ def hyperwriter():
         f.write('IMAGE_DEPTH %d \n' % IMAGE_DEPTH)
         f.write('    # IMAGE_SIZE, found under CIFAR10.py \n\n')
 
-        f.write('# CIFAR10')
+        f.write('# CIFAR10\n')
         f.write('BATCH_SIZE %d \n' % BATCH_SIZE)
         f.write('DATA_DIR %s \n' % DATA_DIR)
         f.write('USE_FP16 %r \n' % USE_FP16)

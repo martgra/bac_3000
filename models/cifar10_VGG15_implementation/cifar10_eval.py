@@ -41,104 +41,107 @@ import cifar10
 from hyper_parameters import *
 
 
-#EVAL_DIR = hyper_parameters.EVAL_DIR
-#EVAL_DATA = hyper_parameters.EVAL_DATA
-#CHECKPOINT_DIR = hyper_parameters.CHECKPOINT_DIR
-#EVAL_INTERVAL_SECS = hyper_parameters.EVAL_INTERVAL_SECS
-#NUM_EXAMPLES = hyper_parameters.NUM_EXAMPLES
-#RUN_ONCE = hyper_parameters.RUN_ONCE
-#BATCH_SIZE = hyper_parameters.BATCH_SIZE
+# EVAL_DIR = hyper_parameters.EVAL_DIR
+# EVAL_DATA = hyper_parameters.EVAL_DATA
+# CHECKPOINT_DIR = hyper_parameters.CHECKPOINT_DIR
+# EVAL_INTERVAL_SECS = hyper_parameters.EVAL_INTERVAL_SECS
+# NUM_EXAMPLES = hyper_parameters.NUM_EXAMPLES
+# RUN_ONCE = hyper_parameters.RUN_ONCE
+# BATCH_SIZE = hyper_parameters.BATCH_SIZE
 
 
 
 def eval_once(saver, summary_writer, top_k_op, summary_op):
-  """Run Eval once.
-  Args:
-    saver: Saver.
-    summary_writer: Summary writer.
-    top_k_op: Top K op.
-    summary_op: Summary op.
-  """
-  with tf.Session() as sess:
-    ckpt = tf.train.get_checkpoint_state(CHECKPOINT_DIR)
-    if ckpt and ckpt.model_checkpoint_path:
-      # Restores from checkpoint
-      saver.restore(sess, ckpt.model_checkpoint_path)
-      # Assuming model_checkpoint_path looks something like:
-      #   /my-favorite-path/cifar10_train/model.ckpt-0,
-      # extract global_step from it.
-      global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
-    else:
-      print('No checkpoint file found')
-      return
+    """Run Eval once.
+    Args:
+      saver: Saver.
+      summary_writer: Summary writer.
+      top_k_op: Top K op.
+      summary_op: Summary op.
+    """
+    with tf.Session() as sess:
+        ckpt = tf.train.get_checkpoint_state(CHECKPOINT_DIR)
+        if ckpt and ckpt.model_checkpoint_path:
+            # Restores from checkpoint
+            saver.restore(sess, ckpt.model_checkpoint_path)
+            # Assuming model_checkpoint_path looks something like:
+            #   /my-favorite-path/cifar10_train/model.ckpt-0,
+            # extract global_step from it.
+            global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
+        else:
+            print('No checkpoint file found')
+            return
 
-    # Start the queue runners.
-    coord = tf.train.Coordinator()
-    try:
-      threads = []
-      for qr in tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS):
-        threads.extend(qr.create_threads(sess, coord=coord, daemon=True,
-                                         start=True))
+        # Start the queue runners.
+        coord = tf.train.Coordinator()
+        try:
+            threads = []
+            for qr in tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS):
+                threads.extend(qr.create_threads(sess, coord=coord, daemon=True, start=True))
 
-      num_iter = int(math.ceil(NUM_EXAMPLES / BATCH_SIZE))
-      true_count = 0  # Counts the number of correct predictions.
-      total_sample_count = num_iter * BATCH_SIZE
-      step = 0
-      while step < num_iter and not coord.should_stop():
-        predictions = sess.run([top_k_op])
-        true_count += np.sum(predictions)
-        step += 1
+            num_iter = int(math.ceil(NUM_EXAMPLES / BATCH_SIZE))
+            true_count = 0  # Counts the number of correct predictions.
+            total_sample_count = num_iter * BATCH_SIZE
+            step = 0
+            while step < num_iter and not coord.should_stop():
+                predictions = sess.run([top_k_op])
+                true_count += np.sum(predictions)
+                step += 1
 
-      # Compute precision @ 1.
-      precision = true_count / total_sample_count
-      print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
+            # Compute precision @ 1.
+            format_str = '%s: precision @ 1 = %.3f\n'
+            precision = true_count / total_sample_count
+            print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
+            with open('/home/jason/tf_train/train_output/val_log.txt', 'a+') as f:
+                f.write(format_str % (datetime.now(), precision))
 
-      summary = tf.Summary()
-      summary.ParseFromString(sess.run(summary_op))
-      summary.value.add(tag='Precision @ 1', simple_value=precision)
-      summary_writer.add_summary(summary, global_step)
-    except Exception as e:  # pylint: disable=broad-except
-      coord.request_stop(e)
+            summary = tf.Summary()
+            summary.ParseFromString(sess.run(summary_op))
+            summary.value.add(tag='Precision @ 1', simple_value=precision)
+            summary_writer.add_summary(summary, global_step)
+        except Exception as e:  # pylint: disable=broad-except
+            coord.request_stop(e)
 
-    coord.request_stop()
-    coord.join(threads, stop_grace_period_secs=10)
+        coord.request_stop()
+        coord.join(threads, stop_grace_period_secs=10)
 
 
 def evaluate():
-  """Eval CIFAR-10 for a number of steps."""
-  with tf.Graph().as_default() as g:
-    # Get images and labels for CIFAR-10.
-    eval_data = EVAL_DATA == 'test'
-    images, labels = cifar10.inputs()
+    """Eval CIFAR-10 for a number of steps."""
+    with tf.Graph().as_default() as g:
+        # Get images and labels for CIFAR-10.
+        eval_data = EVAL_DATA == 'test'
+        images, labels = cifar10.inputs()
 
-    # Build a Graph that computes the logits predictions from the
-    # inference model.
-    logits = cifar10.inference(images)
+        # Build a Graph that computes the logits predictions from the
+        # inference model.
+        logits = cifar10.inference(images)
 
-    # Calculate predictions.
-    top_k_op = tf.nn.in_top_k(logits, labels, 1)
+        # Calculate predictions.
+        top_k_op = tf.nn.in_top_k(logits, labels, 1)
 
-    # Restore the moving average version of the learned variables for eval.
-    variable_averages = tf.train.ExponentialMovingAverage(
-        cifar10.MOVING_AVERAGE_DECAY)
-    variables_to_restore = variable_averages.variables_to_restore()
-    saver = tf.train.Saver(variables_to_restore)
+        # Restore the moving average version of the learned variables for eval.
+        variable_averages = tf.train.ExponentialMovingAverage(cifar10.MOVING_AVERAGE_DECAY)
+        variables_to_restore = variable_averages.variables_to_restore()
+        saver = tf.train.Saver(variables_to_restore)
 
-    # Build the summary operation based on the TF collection of Summaries.
-    summary_op = tf.summary.merge_all()
+        # Build the summary operation based on the TF collection of Summaries.
+        summary_op = tf.summary.merge_all()
 
-    summary_writer = tf.summary.FileWriter(EVAL_DIR, g)
+        summary_writer = tf.summary.FileWriter(EVAL_DIR, g)
 
-    while True:
-      eval_once(saver, summary_writer, top_k_op, summary_op)
-      if RUN_ONCE:
-        break
-      time.sleep(EVAL_INTERVAL_SECS)
+        while True:
+            eval_once(saver, summary_writer, top_k_op, summary_op)
+            if RUN_ONCE:
+                break
+            time.sleep(EVAL_INTERVAL_SECS)
 
 
 def main(argv=None):  # pylint: disable=unused-argument
-  evaluate()
+    evaluate()
 
 
 if __name__ == '__main__':
-  tf.app.run()
+    TRAIN_MODE = False
+    hyperwriter()
+    tf.app.run()
